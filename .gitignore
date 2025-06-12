@@ -1,0 +1,2 @@
+# Ignore .tfvars
+*.tfvars
