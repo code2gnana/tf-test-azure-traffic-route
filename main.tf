@@ -68,7 +68,7 @@ resource "azurerm_network_interface" "nva_nic" {
   name                = "nic-vm-nva"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-    
+
 
   ip_configuration {
     name                          = "ipconfig1"
@@ -204,7 +204,7 @@ resource "azurerm_route_table" "route_table_public" {
 resource "azurerm_route" "route_to_private" {
   name                   = "route-to-private-subnet"
   resource_group_name    = azurerm_resource_group.rg.name
-  route_table_name       = azurerm_route_table_public.name
+  route_table_name       = azurerm_route_table.route_table_public.name
   address_prefix         = "10.2.2.0/24"
   next_hop_type          = "VirtualAppliance"
   next_hop_in_ip_address = azurerm_network_interface.nva_nic.ip_configuration[0].private_ip_address
@@ -213,5 +213,5 @@ resource "azurerm_route" "route_to_private" {
 # Associate route table to subnet-public
 resource "azurerm_subnet_route_table_association" "public_subnet_route_assoc" {
   subnet_id      = azurerm_subnet.subnet_public.id
-  route_table_id = azurerm_route_table_public.id
+  route_table_id = azurerm_route_table.route_table_public.id
 }
