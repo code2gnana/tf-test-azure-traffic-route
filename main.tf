@@ -6,7 +6,8 @@ resource "azurerm_resource_group" "rg" {
 
 # Virtual Network with 3 subnets
 resource "azurerm_virtual_network" "vnet" {
-  name                = "vnet-ubuntu"
+  name = "vnet-ubuntu"
+  # name                = "vnet-gnan-test-routing"
   address_space       = ["10.2.0.0/16"]
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
@@ -61,6 +62,46 @@ resource "azurerm_bastion_host" "bastion" {
     subnet_id            = azurerm_subnet.bastion_subnet.id
     public_ip_address_id = azurerm_public_ip.bastion_pip.id
   }
+}
+
+# create a Network Security Group (NSG) for the public subnet
+resource "azurerm_network_security_group" "nsg_public" {
+  name                = "nsg-public"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  # Define a security rule to allow all outbound traffic with soruce service tag VirtualNetwork and destination service tag storage
+  security_rule {
+    name                       = "allow-storage-all"
+    priority                   = 100
+    direction                  = "Outbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "VirtualNetwork"
+    destination_address_prefix = "Storage"
+  }
+
+  # Define a security rule to deny all outbound traffic with source service tag VirtualNetwork and destination service tag Internet
+  security_rule {
+    name                       = "deny-internet-all"
+    priority                   = 110
+    direction                  = "Outbound"
+    access                     = "Deny"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "VirtualNetwork"
+    destination_address_prefix = "Internet"
+  }
+
+}
+
+# Associate the NSG with the public subnet
+resource "azurerm_subnet_network_security_group_association" "public_subnet_nsg_assoc" {
+  subnet_id                 = azurerm_subnet.subnet_public.id
+  network_security_group_id = azurerm_network_security_group.nsg_public.id
 }
 
 # Network Interface for vm-nva (with IP forwarding enabled)
@@ -132,6 +173,23 @@ resource "azurerm_linux_virtual_machine" "vm_nva" {
     sku       = "22_04-lts-gen2"
     version   = "latest"
   }
+
+  # Enable IP forwarding on the VM
+  custom_data = base64encode(
+    <<-EOF
+    #clouud-config
+    # This is a placeholder for any cloud-init configuration you might want to add
+    write_files:
+      - path: /etc/sysctl.d/99-ip-forward.conf
+        content: |
+          net.ipv4.ip_forward=1
+        owner: root:root
+        permissions: '0644'
+
+    runcmd:
+      - sysctl -p /etc/sysctl.d/99-ip-forward.conf
+    EOF
+  )
 }
 
 # Ubuntu VM vm-public
