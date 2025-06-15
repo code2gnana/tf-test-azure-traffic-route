@@ -6,8 +6,7 @@ resource "azurerm_resource_group" "rg" {
 
 # Virtual Network with 3 subnets
 resource "azurerm_virtual_network" "vnet" {
-  name = "vnet-ubuntu"
-  # name                = "vnet-gnan-test-routing"
+  name                = "vnet-gnan-test-routing"
   address_space       = ["10.2.0.0/16"]
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
