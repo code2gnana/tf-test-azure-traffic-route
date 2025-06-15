@@ -174,22 +174,6 @@ resource "azurerm_linux_virtual_machine" "vm_nva" {
     version   = "latest"
   }
 
-  # Enable IP forwarding on the VM
-  custom_data = base64encode(
-    <<-EOF
-    #clouud-config
-    # This is a placeholder for any cloud-init configuration you might want to add
-    write_files:
-      - path: /etc/sysctl.d/99-ip-forward.conf
-        content: |
-          net.ipv4.ip_forward=1
-        owner: root:root
-        permissions: '0644'
-
-    runcmd:
-      - sysctl -p /etc/sysctl.d/99-ip-forward.conf
-    EOF
-  )
 }
 
 # Ubuntu VM vm-public
