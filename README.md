@@ -18,14 +18,7 @@ This setup is useful for scenarios where you want to inspect, filter, or control
 
 ## Architecture Overview
 
-```picture
-[Public VM] <---> [NVA VM] <---> [Private VM]
-      |                |                |
-  [Public Subnet]  [NVA Subnet]   [Private Subnet]
-           \__________|___________/
-                   |
-                [VNET]
-```
+![Architecture Overview](/attachments/Azure_traffic_routing.png)
 
 - **Public VM**: Just for simulation of purpose. But the VM is accessible internally only via Bations host.
 - **Private VM**: Only accessible via the NVA.
