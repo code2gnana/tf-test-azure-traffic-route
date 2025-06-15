@@ -3,6 +3,7 @@
 ## Purpose
 
 This repository contains Infrastructure as Code (IaC) using Terraform to automate the deployment of a secure network topology in Azure.
+This is an Terraform(IaC) implementation of tutorial described in [Azure Learn module](https://learn.microsoft.com/en-us/azure/virtual-network/tutorial-create-route-table?tabs=portal)
 
 **It provisions:**
 
