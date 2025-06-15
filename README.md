@@ -27,7 +27,7 @@ This setup is useful for scenarios where you want to inspect, filter, or control
                 [VNET]
 ```
 
-- **Public VM**: Accessible from the internet.
+- **Public VM**: Just for simulation of purpose. But the VM is accessible internally only via Bations host.
 - **Private VM**: Only accessible via the NVA.
 - **NVA VM**: Acts as a router/firewall between public and private subnets.
 - **Route Table**: Ensures traffic from the Public VM to the Private VM is routed through the NVA.
