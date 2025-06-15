@@ -1,6 +1,6 @@
 # Resource Group
 resource "azurerm_resource_group" "rg" {
-  name     = "rg-ubuntu-vms"
+  name     = "rg-gnan-test-routing"
   location = var.location
 }
 
@@ -69,6 +69,7 @@ resource "azurerm_network_interface" "nva_nic" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
+  enable_ip_forwarding = true
 
   ip_configuration {
     name                          = "ipconfig1"
@@ -127,8 +128,8 @@ resource "azurerm_linux_virtual_machine" "vm_nva" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts-gen2"
     version   = "latest"
   }
 }
@@ -157,8 +158,8 @@ resource "azurerm_linux_virtual_machine" "vm_public" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts-gen2"
     version   = "latest"
   }
 }
@@ -187,8 +188,8 @@ resource "azurerm_linux_virtual_machine" "vm_private" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts-gen2"
     version   = "latest"
   }
 }
