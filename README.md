@@ -3,8 +3,10 @@
 ## Purpose
 
 This repository contains Infrastructure as Code (IaC) using Terraform to automate the deployment of a secure network topology in Azure.
+
 **It provisions:**
 
+- A Bastion Host
 - A Virtual Network (VNET)
 - Public and Private Subnets
 - A Network Virtual Appliance (NVA) VM
@@ -20,7 +22,7 @@ This setup is useful for scenarios where you want to inspect, filter, or control
 
 ![Architecture Overview](/attachments/Azure_traffic_routing.png)
 
-- **Public VM**: Just for simulation of purpose. But the VM is accessible internally only via Bations host.
+- **Public VM**: Just for simulation of purpose. But the VM is accessible internally only via Bastion host.
 - **Private VM**: Only accessible via the NVA.
 - **NVA VM**: Acts as a router/firewall between public and private subnets.
 - **Route Table**: Ensures traffic from the Public VM to the Private VM is routed through the NVA.
@@ -46,7 +48,7 @@ cd tf-test-azure-traffic-route
 
 ### 2. Authenticate with Azure
 
-```sh
+```bash
 az login
 az account set --subscription "<your-subscription-id>"
 ```
@@ -65,19 +67,19 @@ location        = "australiaeast"
 
 ### 4. Initialize Terraform
 
-```sh
+```bash
 terraform init
 ```
 
 ### 5. Review the Plan
 
-```sh
+```bash
 terraform plan
 ```
 
 ### 6. Apply the Configuration
 
-```sh
+```bash
 terraform apply
 ```
 
@@ -87,7 +89,7 @@ terraform apply
 
 To destroy all resources:
 
-```sh
+```bash
 terraform destroy
 ```
 
