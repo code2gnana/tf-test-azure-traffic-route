@@ -3,17 +3,47 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-trigger:
-- main
+# trigger:
+# - main
 
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  # Store these securely in Azure DevOps variable groups or secrets!
+  AZURE_SUBSCRIPTION_ID: $(azureSubscriptionId)
+  AZURE_CLIENT_ID: $(azureClientId)
+  AZURE_CLIENT_SECRET: $(azureClientSecret)
+  AZURE_TENANT_ID: $(azureTenantId)
+  TF_VERSION: '1.10.5'
+
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
 
 - script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    curl -sL https://raw.githubusercontent.com/hashicorp/terraform-installer/master/install.sh | bash -s ${TF_VERSION}
+    terraform -version
+  displayName: 'Install Terraform'
+
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: '<your-azure-devops-service-connection>'
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      echo "Logging in to Azure using service principal..."
+      az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+      az account set --subscription $AZURE_SUBSCRIPTION_ID
+      echo "Initializing Terraform..."
+      terraform init
+      echo "Validating Terraform..."
+      terraform validate
+      echo "Planning Terraform deployment..."
+      terraform plan -out=tfplan
+      echo "Applying Terraform deployment..."
+      terraform apply -auto-approve tfplan
+    workingDirectory: $(System.DefaultWorkingDirectory)
+  displayName: 'Terraform Init, Validate, Plan, and Apply'
