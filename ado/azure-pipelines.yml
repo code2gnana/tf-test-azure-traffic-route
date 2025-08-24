@@ -30,7 +30,7 @@ steps:
 
 - task: AzureCLI@2
   inputs:
-    azureSubscription: '<your-azure-devops-service-connection>'
+    azureSubscription: 'code2gnana(1)'
     scriptType: bash
     scriptLocation: inlineScript
     inlineScript: |
