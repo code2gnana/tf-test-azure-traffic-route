@@ -30,7 +30,7 @@ steps:
 
 - task: AzureCLI@2
   inputs:
-    azureSubscription: 'GBsubscription(51876dac-fb04-456e-a204-5e8fbc440c15)'
+    azureSubscription: '4e34d809-4c39-4af0-af09-f9487160bb26'
     scriptType: bash
     scriptLocation: inlineScript
     inlineScript: |
