@@ -30,7 +30,7 @@ steps:
 
 - task: AzureCLI@2
   inputs:
-    azureSubscription: 'code2gnana(1)'
+    azureSubscription: 'code2gnana'
     scriptType: bash
     scriptLocation: inlineScript
     inlineScript: |
