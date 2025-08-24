@@ -30,7 +30,7 @@ steps:
 
 - task: AzureCLI@2
   inputs:
-    azureSubscription: '4e34d809-4c39-4af0-af09-f9487160bb26'
+    azureSubscription: 'arm'
     scriptType: bash
     scriptLocation: inlineScript
     inlineScript: |
