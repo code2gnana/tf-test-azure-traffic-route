@@ -30,7 +30,7 @@ steps:
 
 - task: AzureCLI@2
   inputs:
-    azureSubscription: 'code2gnana'
+    azureSubscription: 'GBsubscription(51876dac-fb04-456e-a204-5e8fbc440c15)'
     scriptType: bash
     scriptLocation: inlineScript
     inlineScript: |
