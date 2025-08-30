@@ -33,3 +33,16 @@ stages:
           - task: TerraformInstaller@1
             inputs:
               terraformVersion: 'latest'
+
+          # Initialize Terraform
+          - task: TerraformTaskV4@5
+            inputs:
+              provider: 'azurerm'
+              backendServiceArm: 'arm'
+              backendAzureRmUseEntraIdForAuthentication: false
+              # backendAzureRmResourceGroupName: $(backendResourceGroup)
+              # backendAzureRmStorageAccountName: $(backendStorageAccount)
+              # backendAzureRmContainerName: $(backendContainer)
+              # backendAzureRmKey: $(backendKey)
+              command: 'init'  # Initialize Terraform
+              # workingDirectory: 'terraform'  # Set the working directory
