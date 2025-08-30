@@ -12,7 +12,17 @@ variables:
   AZURE_CLIENT_ID: $(azureClientId)
   AZURE_CLIENT_SECRET: $(azureClientSecret)
   AZURE_TENANT_ID: $(azureTenantId)
-  TF_VERSION: '1.10.5'
+  TF_VERSION: 'latest'
+
+# - task: TerraformInstaller@1
+#   inputs:
+#     terraformVersion: 'latest'
+#     - task: TerraformTask@5
+#       inputs:
+#         provider: 'azurerm'
+#         command: 'init'
+#         backendAzureRmUseEntraIdForAuthentication: false
+#         backendServiceArm: 'arm'
 
 stages:
   # Stage 1: Initialization (init, validate, lint)
@@ -20,21 +30,17 @@ stages:
     jobs:
       - job: TerraformInit
         steps:
-          - task: TerraformInstaller@0  # Install Terraform
+          - task: TerraformInstaller@1  # Install Terraform
             inputs:
-              terraformVersion: $(terraformVersion)
+              terraformVersion: $(TF_VERSION)
+              - task: TerraformTask@5
+                inputs:
+                  provider: 'azurerm'
+                  command: 'init'
+                  backendAzureRmUseEntraIdForAuthentication: false
+                  backendServiceArm: 'arm'
 
-          # Initialize Terraform
-          - task: TerraformTaskV4@4
-            inputs:
-              provider: 'azurerm'
-              backendServiceArm: $(azureServiceConnection)
-              backendAzureRmResourceGroupName: $(backendResourceGroup)
-              backendAzureRmStorageAccountName: $(backendStorageAccount)
-              backendAzureRmContainerName: $(backendContainer)
-              backendAzureRmKey: $(backendKey)
-              command: 'init'  # Initialize Terraform
-              workingDirectory: 'terraform'  # Set the working directory
+
     # jobs:
     # - job: Terraform_Init_Plan
     #   steps:
