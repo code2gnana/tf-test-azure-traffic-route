@@ -1,10 +1,7 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
-# trigger:
-# - main
+trigger:
+  branches:
+    include:
+      - main
 
 pool:
   vmImage: ubuntu-latest
@@ -18,16 +15,26 @@ variables:
   TF_VERSION: '1.10.5'
 
 stages:
-  - stage: Terraform
-    displayName: 'Terraform Init and Plan'
+  # Stage 1: Initialization (init, validate, lint)
+  - stage: Initialization
     jobs:
-    - job: Terraform_Init
-      displayName: 'Terraform Init'
-      steps:
-      - task: TerraformInstaller@1
-        displayName: 'Install Terraform'
-        inputs:
-          terraformVersion: '$(TF_VERSION)'
+      - job: TerraformInit
+        steps:
+          - task: TerraformInstaller@0  # Install Terraform
+            inputs:
+              terraformVersion: $(terraformVersion)
+
+          # Initialize Terraform
+          - task: TerraformTaskV4@4
+            inputs:
+              provider: 'azurerm'
+              backendServiceArm: $(azureServiceConnection)
+              backendAzureRmResourceGroupName: $(backendResourceGroup)
+              backendAzureRmStorageAccountName: $(backendStorageAccount)
+              backendAzureRmContainerName: $(backendContainer)
+              backendAzureRmKey: $(backendKey)
+              command: 'init'  # Initialize Terraform
+              workingDirectory: 'terraform'  # Set the working directory
     # jobs:
     # - job: Terraform_Init_Plan
     #   steps:
