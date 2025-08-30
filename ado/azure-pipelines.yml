@@ -30,15 +30,10 @@ stages:
     jobs:
       - job: TerraformInit
         steps:
-          - task: TerraformInstaller@1  # Install Terraform
+          - task: TerraformInstaller@1
             inputs:
-              terraformVersion: $(TF_VERSION)
-              - task: TerraformTask@5
-                inputs:
-                  provider: 'azurerm'
-                  command: 'init'
-                  backendAzureRmUseEntraIdForAuthentication: false
-                  backendServiceArm: 'arm'
+              terraformVersion: 'latest'
+
 
 
     # jobs:
