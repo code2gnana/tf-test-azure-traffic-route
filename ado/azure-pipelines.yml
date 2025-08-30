@@ -19,34 +19,43 @@ variables:
 
 stages:
   - stage: Terraform
+    displayName: 'Terraform Init and Plan'
     jobs:
-    - job: Terraform_Init_Plan
+    - job: Terraform_Init
+      displayName: 'Terraform Init'
       steps:
-      - task: Bash@3
+      - task: TerraformInstaller@1
+        displayName: 'Install Terraform'
         inputs:
-          targetType: 'inline'
-          script: |
-            wget https://releases.hashicorp.com/terraform/$(TF_VERSION)/terraform_$(TF_VERSION)_linux_amd64.zip
-            unzip terraform_$(TF_VERSION)_linux_amd64.zip
-            sudo mv terraform /usr/local/bin/
-            terraform -version
-      - script: |
-          echo "##[section]Logging in to Azure..."
-          az login --service-principal --username $(AZURE_CLIENT_ID) --password $(AZURE_CLIENT_SECRET) --tenant $(AZURE_TENANT_ID)
-          az account set --subscription $(AZURE_SUBSCRIPTION_ID)
-        displayName: 'Azure CLI Login'
-      - script: |
-          echo "##[section]Initializing Terraform..."
-          terraform init -input=false
-        displayName: 'Terraform Init'
-      - script: |
-          echo "##[section]Planning Terraform changes..."
-          export ARM_SUBSCRIPTION_ID=$(AZURE_SUBSCRIPTION_ID)
-          export ARM_CLIENT_ID=$(AZURE_CLIENT_ID)
-          export ARM_CLIENT_SECRET=$(AZURE_CLIENT_SECRET)
-          export ARM_TENANT_ID=$(AZURE_TENANT_ID)
-          terraform plan -out=tfplan -input=false
-        displayName: 'Terraform Plan'
+          terraformVersion: '$(TF_VERSION)'
+    # jobs:
+    # - job: Terraform_Init_Plan
+    #   steps:
+    #   - task: Bash@3
+    #     inputs:
+    #       targetType: 'inline'
+    #       script: |
+    #         wget https://releases.hashicorp.com/terraform/$(TF_VERSION)/terraform_$(TF_VERSION)_linux_amd64.zip
+    #         unzip terraform_$(TF_VERSION)_linux_amd64.zip
+    #         sudo mv terraform /usr/local/bin/
+    #         terraform -version
+    #   - script: |
+    #       echo "##[section]Logging in to Azure..."
+    #       az login --service-principal --username $(AZURE_CLIENT_ID) --password $(AZURE_CLIENT_SECRET) --tenant $(AZURE_TENANT_ID)
+    #       az account set --subscription $(AZURE_SUBSCRIPTION_ID)
+    #     displayName: 'Azure CLI Login'
+    #   - script: |
+    #       echo "##[section]Initializing Terraform..."
+    #       terraform init -input=false
+    #     displayName: 'Terraform Init'
+    #   - script: |
+    #       echo "##[section]Planning Terraform changes..."
+    #       export ARM_SUBSCRIPTION_ID=$(AZURE_SUBSCRIPTION_ID)
+    #       export ARM_CLIENT_ID=$(AZURE_CLIENT_ID)
+    #       export ARM_CLIENT_SECRET=$(AZURE_CLIENT_SECRET)
+    #       export ARM_TENANT_ID=$(AZURE_TENANT_ID)
+    #       terraform plan -out=tfplan -input=false
+    #     displayName: 'Terraform Plan'
       # - task: PublishPipelineArtifact@1
       #   inputs:
       #     targetPath: '$(System.DefaultWorkingDirectory)'
