@@ -20,57 +20,13 @@ variables:
 stages:
   - stage: Terraform
     jobs:
-      - job: Terraform_Init_Plan
-        steps:
-          - task: Bash@3
-            inputs:
-              targetType: 'inline'
-              script: |
-                wget https://releases.hashicorp.com/terraform/$(TF_VERSION)/terraform_$(TF_VERSION)_linux_amd64.zip
-                unzip terraform_$(TF_VERSION)_linux_amd64.zip
-                sudo mv terraform /usr/local/bin/
-                terraform -version
-
-          # Azure CLI login
-          - task: AzureCLI@2
-            inputs:
-              azureSubscription: $(azureSubscriptionId)
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: |
-                echo "Azure CLI login completed."
-
-          # Export credentials for Terraform
-          - script: |
-              export ARM_SUBSCRIPTION_ID=$(AZURE_SUBSCRIPTION_ID)
-              export ARM_CLIENT_ID=$(AZURE_CLIENT_ID)
-              export ARM_CLIENT_SECRET=$(AZURE_CLIENT_SECRET)
-              export ARM_TENANT_ID=$(AZURE_TENANT_ID)
-              terraform init
-            workingDirectory: ../
-
-          - script: |
-              export ARM_SUBSCRIPTION_ID=$(AZURE_SUBSCRIPTION_ID)
-              export ARM_CLIENT_ID=$(AZURE_CLIENT_ID)
-              export ARM_CLIENT_SECRET=$(AZURE_CLIENT_SECRET)
-              export ARM_TENANT_ID=$(AZURE_TENANT_ID)
-              terraform plan -out=tfplan -input=false
-            workingDirectory: ../
-
-          - publish: ../tfplan
-            artifact: tfplan
-
-      # - job: Terraform_Apply
-      #   dependsOn: Terraform_Init_Plan
-      #   condition: succeeded()
-      #   steps:
-      #     - download: current
-      #       artifact: tfplan
-
-      #     - script: |
-      #         export ARM_SUBSCRIPTION_ID=$(AZURE_SUBSCRIPTION_ID)
-      #         export ARM_CLIENT_ID=$(AZURE_CLIENT_ID)
-      #         export ARM_CLIENT_SECRET=$(AZURE_CLIENT_SECRET)
-      #         export ARM_TENANT_ID=$(AZURE_TENANT_ID)
-      #         terraform apply -input=false tfplan
-      #       workingDirectory: ../
+    - job: Terraform_Init_Plan
+      steps:
+      - task: Bash@3
+        inputs:
+          targetType: 'inline'
+          script: |
+            wget https://releases.hashicorp.com/terraform/$(TF_VERSION)/terraform_$(TF_VERSION)_linux_amd64.zip
+            unzip terraform_$(TF_VERSION)_linux_amd64.zip
+            sudo mv terraform /usr/local/bin/
+            terraform -version
