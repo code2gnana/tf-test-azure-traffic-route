@@ -30,3 +30,36 @@ stages:
             unzip terraform_$(TF_VERSION)_linux_amd64.zip
             sudo mv terraform /usr/local/bin/
             terraform -version
+      - script: |
+          echo "##[section]Logging in to Azure..."
+          az login --service-principal -u $(AZURE_CLIENT_ID) -p $(AZURE_CLIENT_SECRET) --tenant $(AZURE_TENANT_ID)
+          az account set --subscription $(AZURE_SUBSCRIPTION_ID)
+        displayName: 'Azure CLI Login'
+      - script: |
+          echo "##[section]Initializing Terraform..."
+          terraform init -input=false
+        displayName: 'Terraform Init'
+      - script: |
+          echo "##[section]Planning Terraform changes..."
+          terraform plan -out=tfplan -input=false
+        displayName: 'Terraform Plan'
+      # - task: PublishPipelineArtifact@1
+      #   inputs:
+      #     targetPath: '$(System.DefaultWorkingDirectory)'
+      #     artifact: 'tfplan'
+      #   displayName: 'Publish Terraform Plan Artifact'
+      # - script: |
+      #     echo "##[section]Applying Terraform changes..."
+      #     terraform apply -input=false tfplan
+      #   displayName: 'Terraform Apply' # Uncomment to enable apply step
+      # - task: AzureCLI@2
+      #   inputs:
+      #     azureSubscription: '$(AZURE_SUBSCRIPTION_ID)'
+      #     scriptType: 'bash'
+      #     scriptLocation: 'inlineScript'
+      #     inlineScript: |
+      #       echo "##[section]Cleaning up resources..."
+      #       terraform destroy -auto-approve
+      #   displayName: 'Terraform Destroy' # Uncomment to enable destroy step
+# Note: Be cautious with the destroy step; uncomment only if you want to clean up resources automatically.
+# Ensure sensitive variables are stored securely in Azure DevOps and not hardcoded.
