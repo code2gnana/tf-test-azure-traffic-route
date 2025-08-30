@@ -22,9 +22,14 @@ stages:
     jobs:
       - job: Terraform_Init_Plan
         steps:
-          - task: TerraformInstaller@0
+          - task: Bash@3
             inputs:
-              terraformVersion: '$(TF_VERSION)'
+              targetType: 'inline'
+              script: |
+                wget https://releases.hashicorp.com/terraform/$(TF_VERSION)/terraform_$(TF_VERSION)_linux_amd64.zip
+                unzip terraform_$(TF_VERSION)_linux_amd64.zip
+                sudo mv terraform /usr/local/bin/
+                terraform -version
 
           # Azure CLI login
           - task: AzureCLI@2
